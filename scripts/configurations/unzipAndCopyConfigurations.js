@@ -7,7 +7,6 @@ var utils = require("./utilities");
 
 var constants = {
   googleServices: "google-services",
-  folderNamePrefix: "firebase."
 };
 
 module.exports = function(context) {
@@ -15,13 +14,11 @@ module.exports = function(context) {
   var cordovaAbove7 = utils.isCordovaAbove(context, 7);
   var defer;
   if (cordovaAbove8) {
-    defer = require('q').defer();
+    defer = require("q").defer();
   } else {
     defer = context.requireCordovaModule("q").defer();
   }
   
-  var appId = utils.getAppId(context);
-
   var platform = context.opts.plugin.platform;
   var platformConfig = utils.getPlatformConfigs(platform);
   if (!platformConfig) {
@@ -29,13 +26,7 @@ module.exports = function(context) {
   }
 
   var wwwPath = utils.getResourcesFolderPath(context, platform, platformConfig);
-  var sourceFolderPath;
-
-  if (cordovaAbove7) {
-    sourceFolderPath = path.join(context.opts.projectRoot, "www", constants.folderNamePrefix + appId);
-  } else {
-    sourceFolderPath = path.join(wwwPath, constants.folderNamePrefix + appId);
-  }
+  var sourceFolderPath = utils.getSourceFolderPath(context, wwwPath);
   
   var googleServicesZipFile = utils.getZipFile(sourceFolderPath, constants.googleServices);
   if (!googleServicesZipFile) {

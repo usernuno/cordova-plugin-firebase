@@ -25,12 +25,18 @@ var constants = {
       return "platforms/ios/" + utils.getAppName(context) + "/Resources";
     }
   },
-  zipExtension: ".zip"
+  zipExtension: ".zip",
+  folderNameSuffix: ".firebase",
+  folderNamePrefix: "firebase."
 };
 
 function handleError(errorMessage, defer) {
   console.log(errorMessage);
   defer.reject();
+}
+
+function checkIfFolderExists(path) {
+  return fs.existsSync(path);
 }
 
 function getFilesFromPath(path) {
@@ -40,6 +46,28 @@ function getFilesFromPath(path) {
 function createOrCheckIfFolderExists(path) {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path);
+  }
+}
+
+function getSourceFolderPath(context, wwwPath) {
+  var sourceFolderPath;
+  var appId = getAppId(context);
+  var cordovaAbove7 = isCordovaAbove(context, 7);
+
+  // New way of looking for the configuration files' folder
+  if (cordovaAbove7) {
+    sourceFolderPath = path.join(context.opts.projectRoot, "www", appId + constants.folderNameSuffix);
+  } else {
+    sourceFolderPath = path.join(wwwPath, appId + constants.folderNameSuffix);
+  }
+
+  // Fallback to deprecated way of looking for the configuration files' folder
+  if(!checkIfFolderExists(sourceFolderPath)) {
+    if (cordovaAbove7) {
+      sourceFolderPath = path.join(context.opts.projectRoot, "www", constants.folderNamePrefix + appId);
+    } else {
+      sourceFolderPath = path.join(wwwPath, constants.folderNamePrefix + appId);
+    }
   }
 }
 
@@ -132,10 +160,6 @@ function copyFromSourceToDestPath(defer, sourcePath, destPath) {
   });
 }
 
-function checkIfFolderExists(path) {
-  return fs.existsSync(path);
-}
-
 module.exports = {
   isCordovaAbove,
   handleError,
@@ -147,5 +171,6 @@ module.exports = {
   getFilesFromPath,
   createOrCheckIfFolderExists,
   checkIfFolderExists,
-  getAndroidTargetSdk
+  getAndroidTargetSdk,
+  getSourceFolderPath
 };
