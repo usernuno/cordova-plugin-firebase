@@ -6,7 +6,7 @@ var AdmZip = require("adm-zip");
 var utils = require("./utilities");
 
 var constants = {
-  googleServices: "google-services",
+  googleServices: "google-services"
 };
 
 module.exports = function(context) {
