@@ -5,7 +5,7 @@ Android and iOS supported.
 ## Firebase Configuration Files
 1) Download your Firebase configuration files, GoogleService-Info.plist for ios and google-services.json for android.
 2) Create a zipped folder with the name "google-services.zip" and put both configuration files inside.
-3) On the "www" folder, create a folder called "firebase." + YourAppIdentifier and place the zip inside.
+3) On the "www" folder, create a folder called <YourAppIdentifier> + ".firebase" and place the zip inside.
 
 ```
 - My Project/
@@ -13,7 +13,7 @@ Android and iOS supported.
     platforms/
     plugins/
     www/
-        firebase.com.example.application.appid/
+        com.example.application.appid.firebase/
             google-services.zip/
                 google-services.json        <--
                 GoogleService-Info.plist    <--
