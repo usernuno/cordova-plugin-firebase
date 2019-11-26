@@ -179,7 +179,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
       }
 
       // Sound
-      Uri soundPath;
+      Uri soundPath = null;
       if (sound != null) {
         Log.d(TAG, "sound before path is: " + sound);
 
