@@ -179,6 +179,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
       }
 
       // Sound
+      Uri soundPath;
       if (sound != null) {
         Log.d(TAG, "sound before path is: " + sound);
 
@@ -232,6 +233,8 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
         for (int i = 0; i < channels.size(); i++) {
           if (channelId.equals(channels.get(i).getId())) {
             channelExists = true;
+            Log.d(TAG, "Channel exists");
+            Log.d(TAG, "SoundPath: " + channels.get(i).getSound().toString());
           }
         }
         
@@ -246,13 +249,13 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             channel.setLightColor(lightArgb);
           }
           
-          if (sound != null) {
+          if (soundPath != null) {
             AudioAttributes attributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                 .build();
-            Uri soundPath = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                + "://" + getPackageName() + "/raw/" + sound);
+            Log.d(TAG, "Setting sound on channel");
             channel.setSound(soundPath, attributes);
+            Log.d(TAG, "SoundPath: " + channel.getSound().toString());
           }
           
           notificationManager.createNotificationChannel(channel);
