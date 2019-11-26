@@ -183,7 +183,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
       if (sound != null) {
         Log.d(TAG, "sound before path is: " + sound);
 
-        Uri soundPath = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
+        soundPath = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
           + "://" + getPackageName() + "/raw/" + sound);
 
         Log.d(TAG, "Parsed sound is: " + soundPath.toString());
