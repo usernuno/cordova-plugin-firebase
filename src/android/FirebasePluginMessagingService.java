@@ -251,8 +251,8 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
           
           if (soundPath != null) {
             AudioAttributes attributes = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .build();
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE).build();
             Log.d(TAG, "Setting sound on channel");
             channel.setSound(soundPath, attributes);
             Log.d(TAG, "SoundPath: " + channel.getSound().toString());
