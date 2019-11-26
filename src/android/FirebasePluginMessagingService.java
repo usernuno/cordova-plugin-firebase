@@ -10,8 +10,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.app.Notification;
 import android.text.TextUtils;
@@ -42,17 +41,6 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
     return this.getString(
     this.getResources().getIdentifier(
       name, "string", this.getPackageName()));
-  }
-
-  /**
-   * Called if InstanceID token is updated. This may occur if the security of
-   * the previous token had been compromised. Note that this is called when the InstanceID token
-   * is initially generated so this is where you would retrieve the token.
-  */
-  @Override
-  public void onNewToken(String token) {
-    Log.d(TAG, "Refreshed token: " + token);
-    FirebasePlugin.sendToken(token);
   }
 
   /**
