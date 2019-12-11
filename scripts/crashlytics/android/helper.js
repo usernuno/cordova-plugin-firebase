@@ -28,8 +28,8 @@ function addDependencies(buildGradle, context) {
   var googlePlayDependency;
   var fabricDependency;
   if (sdk >= 28) {
-    googlePlayDependency = whitespace + 'classpath \'com.google.gms:google-services:4.2.0\' // google-services dependency from cordova-plugin-firebase';
-    fabricDependency = whitespace + 'classpath \'io.fabric.tools:gradle:1.29.0\' // fabric dependency from cordova-plugin-firebase'
+    googlePlayDependency = whitespace + 'classpath \'com.google.gms:google-services:4.3.3\' // google-services dependency from cordova-plugin-firebase';
+    fabricDependency = whitespace + 'classpath \'io.fabric.tools:gradle:1.31.2\' // fabric dependency from cordova-plugin-firebase'
   } else {
     googlePlayDependency = whitespace + 'classpath \'com.google.gms:google-services:4.1.0\' // google-services dependency from cordova-plugin-firebase';
     fabricDependency = whitespace + 'classpath \'io.fabric.tools:gradle:1.25.4\' // fabric dependency from cordova-plugin-firebase'
