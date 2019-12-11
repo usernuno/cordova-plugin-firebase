@@ -126,30 +126,19 @@ function isCordovaAbove(context, version) {
   return parseInt(sp[0]) >= version;
 }
 
-function getAndroidTargetSdk(context) {
-  var cordovaAbove8 = isCordovaAbove(context, 8);
-  var et;
-  if (cordovaAbove8) {
-    et = require('elementtree');
-  } else {
-    et = context.requireCordovaModule('elementtree');
+function getAndroidTargetSdk() {
+  var projectPropertiesPath = path.join("platforms", "android", "CordovaLib", "project.properties");
+  if (checkIfFolderExists(projectPropertiesPath)) {
+    var projectProperties = fs.readFileSync(projectPropertiesPath).toString();
+    var lookUp = "target=android-";
+    var from = projectProperties.indexOf(lookUp) + lookUp.length;
+    var length = projectProperties.indexOf('\n', from) - from;
+    var sdk = projectProperties.substr(from, length).trim();
+    console.log('getAndroidTargetSdk', sdk);
+    return parseInt(sdk);
   }
 
-  var androidManifestPath1 = path.join("platforms", "android", "AndroidManifest.xml");
-  var androidManifestPath2 = path.join("platforms", "android", "app", "src", "main", "AndroidManifest.xml");
-
-  var data;
-  if (checkIfFolderExists(androidManifestPath1)) {
-    data = fs.readFileSync(androidManifestPath1).toString();
-  } else if (checkIfFolderExists(androidManifestPath2)){
-    data = fs.readFileSync(androidManifestPath2).toString();
-  } else {
-    return;
-  }
-
-  var etree = et.parse(data);
-  var sdk = etree.findall('./uses-sdk')[0].get('android:targetSdkVersion');
-  return parseInt(sdk);
+  throw new Error('Could not find android target in ' + projectPropertiesPath);
 }
 
 function copyFromSourceToDestPath(defer, sourcePath, destPath) {
