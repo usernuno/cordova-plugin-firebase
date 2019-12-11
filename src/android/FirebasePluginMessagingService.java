@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+//import androidx.core.app.NotificationCompat;
+//import androidx.core.app.NotificationManagerCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.app.Notification;
@@ -41,6 +43,17 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
     return this.getString(
     this.getResources().getIdentifier(
       name, "string", this.getPackageName()));
+  }
+
+  /**
+   * Called if InstanceID token is updated. This may occur if the security of
+   * the previous token had been compromised. Note that this is called when the InstanceID token
+   * is initially generated so this is where you would retrieve the token.
+  */
+  @Override
+  public void onNewToken(String token) {
+    Log.d(TAG, "Refreshed token: " + token);
+    FirebasePlugin.sendToken(token);
   }
 
   /**
@@ -179,11 +192,10 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
       }
 
       // Sound
-      Uri soundPath = null;
       if (sound != null) {
         Log.d(TAG, "sound before path is: " + sound);
 
-        soundPath = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
+        Uri soundPath = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
           + "://" + getPackageName() + "/raw/" + sound);
 
         Log.d(TAG, "Parsed sound is: " + soundPath.toString());
@@ -233,8 +245,6 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
         for (int i = 0; i < channels.size(); i++) {
           if (channelId.equals(channels.get(i).getId())) {
             channelExists = true;
-            Log.d(TAG, "Channel exists");
-            Log.d(TAG, "SoundPath: " + channels.get(i).getSound().toString());
           }
         }
         
@@ -249,13 +259,13 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             channel.setLightColor(lightArgb);
           }
           
-          if (soundPath != null) {
+          if (sound != null) {
             AudioAttributes attributes = new AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE).build();
-            Log.d(TAG, "Setting sound on channel");
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
+            Uri soundPath = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
+                + "://" + getPackageName() + "/raw/" + sound);
             channel.setSound(soundPath, attributes);
-            Log.d(TAG, "SoundPath: " + channel.getSound().toString());
           }
           
           notificationManager.createNotificationChannel(channel);

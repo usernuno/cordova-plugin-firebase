@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.net.Uri;
+//import androidx.annotation.NonNull;
+//import androidx.core.app.NotificationManagerCompat;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
@@ -153,12 +155,10 @@ public class FirebasePlugin extends CordovaPlugin {
       else this.fetch(callbackContext);
       return true;
     } else if (action.equals("getByteArray")) {
-      if (args.length() > 1) this.getByteArray(callbackContext, args.getString(0), args.getString(1));
-      else this.getByteArray(callbackContext, args.getString(0), null);
+      this.getByteArray(callbackContext, args.getString(0));
       return true;
     } else if (action.equals("getValue")) {
-      if (args.length() > 1) this.getValue(callbackContext, args.getString(0), args.getString(1));
-      else this.getValue(callbackContext, args.getString(0), null);
+      this.getValue(callbackContext, args.getString(0));
       return true;
     } else if (action.equals("getInfo")) {
       this.getInfo(callbackContext);
@@ -167,8 +167,7 @@ public class FirebasePlugin extends CordovaPlugin {
       this.setConfigSettings(callbackContext, args.getJSONObject(0));
       return true;
     } else if (action.equals("setDefaults")) {
-      if (args.length() > 1) this.setDefaults(callbackContext, args.getJSONObject(0), args.getString(1));
-      else this.setDefaults(callbackContext, args.getJSONObject(0), null);
+      this.setDefaults(callbackContext, args.getJSONObject(0));
       return true;
     } else if (action.equals("startTrace")) {
       this.startTrace(callbackContext, args.getString(0));
@@ -668,7 +667,7 @@ public class FirebasePlugin extends CordovaPlugin {
             myTrace = self.traces.get(name);
           }
           if (myTrace != null && myTrace instanceof Trace) {
-            myTrace.incrementCounter(counterNamed);
+            myTrace.incrementMetric(counterNamed, 1);
             callbackContext.success();
             Log.d(TAG, "incrementCounter success");
           } else {
@@ -852,12 +851,11 @@ public class FirebasePlugin extends CordovaPlugin {
     });
   }
 
-  private void getByteArray(final CallbackContext callbackContext, final String key, final String namespace) {
+  private void getByteArray(final CallbackContext callbackContext, final String key) {
     cordova.getThreadPool().execute(new Runnable() {
       public void run() {
         try {
-          byte[] bytes = namespace == null ? FirebaseRemoteConfig.getInstance().getByteArray(key)
-              : FirebaseRemoteConfig.getInstance().getByteArray(key, namespace);
+          byte[] bytes = FirebaseRemoteConfig.getInstance().getByteArray(key);
           JSONObject object = new JSONObject();
           object.put("base64", Base64.encodeToString(bytes, Base64.DEFAULT));
           object.put("array", new JSONArray(bytes));
@@ -870,13 +868,12 @@ public class FirebasePlugin extends CordovaPlugin {
     });
   }
 
-  private void getValue(final CallbackContext callbackContext, final String key, final String namespace) {
-    Log.d(TAG, "getValue called. key: " + key + ". namespace: " + namespace);
+  private void getValue(final CallbackContext callbackContext, final String key) {
+    Log.d(TAG, "getValue called. key: " + key);
     cordova.getThreadPool().execute(new Runnable() {
       public void run() {
         try {
-          FirebaseRemoteConfigValue value = namespace == null ? FirebaseRemoteConfig.getInstance().getValue(key)
-              : FirebaseRemoteConfig.getInstance().getValue(key, namespace);
+          FirebaseRemoteConfigValue value = FirebaseRemoteConfig.getInstance().getValue(key);
           Log.d(TAG, "getValue success. value: " + value.asString());
           callbackContext.success(value.asString());
         } catch (Exception e) {
@@ -927,14 +924,11 @@ public class FirebasePlugin extends CordovaPlugin {
     });
   }
 
-  private void setDefaults(final CallbackContext callbackContext, final JSONObject defaults, final String namespace) {
+  private void setDefaults(final CallbackContext callbackContext, final JSONObject defaults) {
     cordova.getThreadPool().execute(new Runnable() {
       public void run() {
         try {
-          if (namespace == null)
-            FirebaseRemoteConfig.getInstance().setDefaults(defaultsToMap(defaults));
-          else
-            FirebaseRemoteConfig.getInstance().setDefaults(defaultsToMap(defaults), namespace);
+          FirebaseRemoteConfig.getInstance().setDefaults(defaultsToMap(defaults));
           callbackContext.success();
         } catch (Exception e) {
           Crashlytics.logException(e);
