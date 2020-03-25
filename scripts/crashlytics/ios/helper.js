@@ -39,7 +39,13 @@ module.exports = {
 
     // Build the body of the script to be executed during the build phase.
     // var script = '"' + '\\"${SRCROOT}\\"' + "/\\\"" + utilities.getAppName(context) + "\\\"/Plugins/" + utilities.getPluginId() + "/Fabric.framework/run" + '"';
-    var script = '"\\"${PODS_ROOT}/Fabric/run\\""';
+    //var script = '"\\"${PODS_ROOT}/Fabric/run\\""';
+    var script = '"if [ \\"${TARGET_NAME}\\" = \\"美聯開單易\\" ]; then\\n  \\"${PODS_ROOT}/Fabric/run\\"\\nfi"';
+
+
+//shellScript = "if [ \"${TARGET_NAME}\" = \"美聯開單易\" ]; then\n  echo \">>> Running Crashlytics script for target 美聯開單易 <<<\"\n  \"${PODS_ROOT}/Fabric/run\"\nfi\n";
+//shellScript = "\"${PODS_ROOT}/Fabric/run\"";
+
 
     // Generate a unique ID for our new build phase.
     var id = xcodeProject.generateUuid();
