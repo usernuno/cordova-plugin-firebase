@@ -43,12 +43,18 @@ module.exports = function(context) {
     utils.handleError("No directory found", defer);
   }
 
+console.log("Target path: " + targetPath);
+
+console.log("--- Has files:");
   var fileName = files.find(function (name) {
+console.log("Found file: \"" + name + "\"");
+console.log("Does it end with: \"" + platformConfig.firebaseFileExtension + "\"");
     return name.endsWith(platformConfig.firebaseFileExtension);
   });
   if (!fileName) {
     utils.handleError("No file found", defer);
   }
+console.log("--- No more files");
 
   var sourceFilePath = path.join(targetPath, fileName);
   var destFilePath = path.join(context.opts.plugin.dir, fileName);
